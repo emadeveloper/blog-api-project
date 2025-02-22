@@ -42,6 +42,19 @@ public class PostServiceImpl implements PostService {
         return convertDTOtoEntity(post);
     }
 
+    @Override
+    public PostDTO updatePost(PostDTO postDTO, long id) {
+        Post post = repositoryPost.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+
+        post.setTitle(postDTO.getTitle());
+        post.setAuthor(postDTO.getAuthor());
+        post.setContent(postDTO.getContent());
+
+        Post updatedPost = repositoryPost.save(post);
+
+        return convertDTOtoEntity(updatedPost);
+    }
+
     // METHODS TO CONVERT ENTITY TO DTO AND DTO TO ENTITY
     private PostDTO convertDTOtoEntity(Post post) {
         PostDTO postDTO = new PostDTO();
