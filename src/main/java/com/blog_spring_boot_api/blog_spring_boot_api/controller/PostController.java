@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blog_spring_boot_api.blog_spring_boot_api.dto.PostDTO;
@@ -24,19 +25,20 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    @PostMapping
-    public ResponseEntity<PostDTO> createPost (@RequestBody PostDTO postDTO){
-        return new ResponseEntity<>(postService.createPost(postDTO), HttpStatus.CREATED);
-    }
-
     @GetMapping
-    public List<PostDTO> getAllPosts(){
-        return postService.getAllPosts();
+    //Pagination
+    public List<PostDTO> getAllPosts(@RequestParam(value = "pageNum", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize){
+        return postService.getAllPosts(pageNumber, pageSize);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id") long id){
         return ResponseEntity.ok(postService.getPostById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<PostDTO> createPost (@RequestBody PostDTO postDTO){
+        return new ResponseEntity<>(postService.createPost(postDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

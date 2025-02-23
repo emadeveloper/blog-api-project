@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.blog_spring_boot_api.blog_spring_boot_api.dto.PostDTO;
 import com.blog_spring_boot_api.blog_spring_boot_api.exceptions.ResourceNotFoundException;
 import com.blog_spring_boot_api.blog_spring_boot_api.model.Post;
 import com.blog_spring_boot_api.blog_spring_boot_api.repository.RepositoryPost;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -31,12 +34,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDTO> getAllPosts() {
-        List<Post> posts = repositoryPost.findAll();
-        return posts.stream().map(post -> convertDTOtoEntity(post)).collect(Collectors.toList());
+    public List<PostDTO> getAllPosts(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Page<Post> posts = repositoryPost.findAll(pageable);
+        
+        List<Post> postsList = posts.getContent();  
+        return postsList.stream().map(post -> convertDTOtoEntity(post)).collect(Collectors.toList());
     }
 
-    @Override
+    @Override   
     public PostDTO getPostById(long id) {
         Post post = repositoryPost.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         return convertDTOtoEntity(post);
