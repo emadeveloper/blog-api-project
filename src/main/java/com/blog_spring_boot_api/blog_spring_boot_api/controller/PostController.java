@@ -1,7 +1,5 @@
 package com.blog_spring_boot_api.blog_spring_boot_api.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blog_spring_boot_api.blog_spring_boot_api.dto.PostDTO;
+import com.blog_spring_boot_api.blog_spring_boot_api.dto.PostResponse;
 import com.blog_spring_boot_api.blog_spring_boot_api.services.PostService;
 
 @RestController
@@ -27,7 +26,7 @@ public class PostController {
 
     @GetMapping
     //Pagination
-    public List<PostDTO> getAllPosts(@RequestParam(value = "pageNum", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize){
+    public PostResponse getAllPosts(@RequestParam(value = "pageNum", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize){
         return postService.getAllPosts(pageNumber, pageSize);
     }
 
