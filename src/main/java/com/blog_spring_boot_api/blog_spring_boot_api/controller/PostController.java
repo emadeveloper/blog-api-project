@@ -25,29 +25,33 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    //Pagination
-    public PostResponse getAllPosts(@RequestParam(value = "pageNum", defaultValue = "0", required = false) int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize){
-        return postService.getAllPosts(pageNumber, pageSize);
+    // Pagination
+    public PostResponse getAllPosts(
+            @RequestParam(value = "pageNum", defaultValue = "0", required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String sortBy,
+            @RequestParam(value = "order", defaultValue = "asc", required = false) String order) {
+        return postService.getAllPosts(pageNumber, pageSize, sortBy, order);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id") long id){
+    public ResponseEntity<PostDTO> getPostById(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
     @PostMapping
-    public ResponseEntity<PostDTO> createPost (@RequestBody PostDTO postDTO){
+    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
         return new ResponseEntity<>(postService.createPost(postDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PostDTO> updatePost (@PathVariable(name = "id") long id, @RequestBody PostDTO postDTO){
+    public ResponseEntity<PostDTO> updatePost(@PathVariable(name = "id") long id, @RequestBody PostDTO postDTO) {
         PostDTO postDTOResponse = postService.updatePost(postDTO, id);
         return new ResponseEntity<>(postDTOResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost (@PathVariable(name = "id") long id){
+    public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id) {
         postService.deletePost(id);
         return new ResponseEntity<>("Post deleted successfully", HttpStatus.OK);
     }
