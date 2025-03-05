@@ -22,12 +22,25 @@ public class CommentController {
     private CommentService commentService;
 
     @GetMapping("/posts/{postId}/comments")
-    public List<CommentDTO> getCommentsById(@PathVariable(value = "postId") long postId){
+    public List<CommentDTO> getCommentsById(@PathVariable(value = "postId") Long postId) {
         return commentService.getCommentsByPostId(postId);
     }
 
+    @GetMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentDTO> getCommentById(@PathVariable(value = "postId") Long postId,
+            @PathVariable(value = "commentId") Long commentId) {
+        CommentDTO commentDTO = commentService.getCommentById(postId, commentId);
+        if (commentDTO != null) {
+            return new ResponseEntity<>(commentDTO, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/posts/{postId}/comments")
-    public ResponseEntity <CommentDTO> saveComment(@PathVariable(value = "postId") long postId, @RequestBody CommentDTO commentDTO){
+    public ResponseEntity<CommentDTO> saveComment(@PathVariable(value = "postId") long postId,
+            @RequestBody CommentDTO commentDTO) {
         return new ResponseEntity<>(commentService.createComment(postId, commentDTO), HttpStatus.CREATED);
     }
+
 }
