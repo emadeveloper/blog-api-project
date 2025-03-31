@@ -3,6 +3,7 @@ package com.blog_spring_boot_api.blog_spring_boot_api.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ import org.springframework.data.domain.Page;
 public class PostServiceImpl implements PostService {
     @Autowired
     private RepositoryPost repositoryPost;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @Override
     public PostDTO createPost(PostDTO postDTO) {
@@ -83,24 +87,12 @@ public class PostServiceImpl implements PostService {
 
     // METHODS TO CONVERT ENTITY TO DTO AND DTO TO ENTITY
     private PostDTO convertDTOtoEntity(Post post) {
-        PostDTO postDTO = new PostDTO();
-
-        postDTO.setId(post.getId());
-        postDTO.setTitle(post.getTitle());
-        postDTO.setContent(post.getContent());
-        postDTO.setAuthor(post.getAuthor());
-
+        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
         return postDTO;
     }
 
     private Post convertEntityToDto(PostDTO postDTO) {
-        Post post = new Post();
-
-        post.setId(postDTO.getId());
-        post.setTitle(postDTO.getTitle());
-        post.setContent(postDTO.getContent());
-        post.setAuthor(postDTO.getAuthor());
-
+        Post post = modelMapper.map(postDTO, Post.class);
         return post;
     }
 }
