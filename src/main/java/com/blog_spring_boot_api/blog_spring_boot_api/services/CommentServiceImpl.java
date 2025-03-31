@@ -63,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO getCommentById(long postId, long commentId) {
+    public CommentDTO getCommentById(Long postId, Long commentId) {
         Post post = repositoryPost.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 
@@ -77,7 +77,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO updateComment(long postId, Long commentId, CommentDTO commentRequest) {
+    public CommentDTO updateComment(Long postId, Long commentId, CommentDTO commentRequest) {
         Post post = repositoryPost.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "postId", postId));
 
@@ -95,5 +95,20 @@ public class CommentServiceImpl implements CommentService {
         Comment updatedComment = commentRepository.save(comment);
 
         return convertEntityToDTO(updatedComment);
+    }
+
+    @Override
+    public void deleteComment(Long postId, Long commentId) {
+        Post post = repositoryPost.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "postId", postId));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+
+        if (comment.getPost().getId() != post.getId()) {
+            throw new BlogAppException(HttpStatus.BAD_REQUEST, "Comment does not belong to Post");
+        }
+
+        commentRepository.delete(comment);
     }
 }
