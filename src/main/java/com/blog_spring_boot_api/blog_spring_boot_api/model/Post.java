@@ -3,6 +3,8 @@ package com.blog_spring_boot_api.blog_spring_boot_api.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +32,8 @@ public class Post {
     @Column(name = "author", nullable = false)
     private String author;
 
-    //OneTomany relationship with Comments
+    // OneTomany relationship with Comments
+    @JsonBackReference
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
@@ -70,11 +73,18 @@ public class Post {
         super();
     }
 
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
     public Post(Long id, String title, String content, String author) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.author = author;
     }
-
 }

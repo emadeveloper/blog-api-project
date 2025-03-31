@@ -16,6 +16,8 @@ import com.blog_spring_boot_api.blog_spring_boot_api.model.Post;
 import com.blog_spring_boot_api.blog_spring_boot_api.repository.CommentRepository;
 import com.blog_spring_boot_api.blog_spring_boot_api.repository.RepositoryPost;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CommentServiceImpl implements CommentService {
 
@@ -29,19 +31,29 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
 
     @Override
-    public CommentDTO createComment(long postId, CommentDTO commentDTO) {
-        Comment comment = convertDTOToEntity(commentDTO);
+    @Transactional
+    public CommentDTO createComment(Long postId, CommentDTO commentDTO) {
+        // Obtener el post
         Post post = repositoryPost.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 
+        // Crear manualmente en lugar de usar ModelMapper
+        Comment comment = new Comment();
+        comment.setName(commentDTO.getName());
+        comment.setEmail(commentDTO.getEmail());
+        comment.setBody(commentDTO.getBody());
+
+        // Establecer la relación
         comment.setPost(post);
+
+        // Guardar el comentario
         Comment newComment = commentRepository.save(comment);
 
         return convertEntityToDTO(newComment);
     }
 
     @Override
-    public List<CommentDTO> getCommentsByPostId(long postId) {
+    public List<CommentDTO> getCommentsByPostId(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
         return comments.stream().map(comment -> convertEntityToDTO(comment)).collect(Collectors.toList());
     }
@@ -95,14 +107,8 @@ public class CommentServiceImpl implements CommentService {
 
         commentRepository.delete(comment);
     }
+
     private CommentDTO convertEntityToDTO(Comment comment) {
-        CommentDTO commentDTO = modelMapper.map(comment, CommentDTO.class);
-
-        return commentDTO;
-    }
-
-    private Comment convertDTOToEntity(CommentDTO commentDTO) {
-        Comment comment = modelMapper.map(commentDTO, Comment.class);
-        return comment;
+        return modelMapper.map(comment, CommentDTO.class);
     }
 }

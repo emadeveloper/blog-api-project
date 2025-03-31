@@ -28,13 +28,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDTO createPost(PostDTO postDTO) {
         // Convert DTO to Entity
-        Post post = convertEntityToDto(postDTO);
+        Post post = convertDTOtoEntity(postDTO);
 
         // Save to database
         repositoryPost.save(post);
 
         // Convert Entity to DTO
-        PostDTO postDTOResponse = convertDTOtoEntity(post);
+        PostDTO postDTOResponse = convertEntityToDTO(post);
 
         return postDTOResponse;
     }
@@ -46,7 +46,7 @@ public class PostServiceImpl implements PostService {
         Page<Post> posts = repositoryPost.findAll(pageable);
 
         List<Post> postsList = posts.getContent();
-        List<PostDTO> content = postsList.stream().map(post -> convertDTOtoEntity(post)).collect(Collectors.toList());
+        List<PostDTO> content = postsList.stream().map(post -> convertEntityToDTO(post)).collect(Collectors.toList());
 
         PostResponse postResponse = new PostResponse();
 
@@ -63,7 +63,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDTO getPostById(long id) {
         Post post = repositoryPost.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
-        return convertDTOtoEntity(post);
+        return convertEntityToDTO(post);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class PostServiceImpl implements PostService {
 
         Post updatedPost = repositoryPost.save(post);
 
-        return convertDTOtoEntity(updatedPost);
+        return convertEntityToDTO(updatedPost);
     }
 
     @Override
@@ -86,13 +86,11 @@ public class PostServiceImpl implements PostService {
     }
 
     // METHODS TO CONVERT ENTITY TO DTO AND DTO TO ENTITY
-    private PostDTO convertDTOtoEntity(Post post) {
-        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
-        return postDTO;
+    private PostDTO convertEntityToDTO(Post post) {
+        return modelMapper.map(post, PostDTO.class);
     }
-
-    private Post convertEntityToDto(PostDTO postDTO) {
-        Post post = modelMapper.map(postDTO, Post.class);
-        return post;
+    
+    private Post convertDTOtoEntity(PostDTO postDTO) {
+        return modelMapper.map(postDTO, Post.class);
     }
 }
