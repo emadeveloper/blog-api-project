@@ -1,9 +1,21 @@
 package com.blog_spring_boot_api.blog_spring_boot_api.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
+
 public class CommentDTO {
     private long id;
+
+    @NotEmpty
+    @Size(min = 5, max = 100, message = "Name must be between 5 and 100 characters")
     private String name;
+    
+    @NotEmpty
+    @Email
     private String email;
+    
+    @NotEmpty
     private String body;
 
     public CommentDTO(){

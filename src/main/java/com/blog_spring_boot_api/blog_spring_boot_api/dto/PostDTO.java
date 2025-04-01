@@ -4,11 +4,22 @@ import java.util.Set;
 
 import com.blog_spring_boot_api.blog_spring_boot_api.model.Comment;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class PostDTO {
     private Long id;
+    
+    @NotBlank
+    @Size(min = 5, max = 100, message = "Title must be between 5 and 100 characters")
     private String title;
+    
+    @NotBlank
+    @Size(min = 10, max = 1000, message = "Content can't be empty, and should be at least 10 characters long")
     private String content;
+    
     private String author;
+    
     private Set<Comment> comments;
 
     public Long getId() {
