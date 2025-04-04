@@ -21,6 +21,8 @@ import com.blog_spring_boot_api.blog_spring_boot_api.model.Rol;
 import com.blog_spring_boot_api.blog_spring_boot_api.model.User;
 import com.blog_spring_boot_api.blog_spring_boot_api.repository.RolRepository;
 import com.blog_spring_boot_api.blog_spring_boot_api.repository.UserRepository;
+import com.blog_spring_boot_api.blog_spring_boot_api.security.JwtAuthResponseDTO;
+import com.blog_spring_boot_api.blog_spring_boot_api.security.JwtTokenProvider;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -38,13 +40,18 @@ public class AuthController {
         @Autowired
         private PasswordEncoder passwordEncoder;
 
+        @Autowired
+        private JwtTokenProvider jwtTokenProvider;
+
         @PostMapping("/login")
-        public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO){
+        public ResponseEntity<JwtAuthResponseDTO> login(@RequestBody LoginDTO loginDTO){
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsernameOrEmail(), loginDTO.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            return new ResponseEntity<>( "Login successful", HttpStatus.OK);
+            String token = jwtTokenProvider.generateToken(authentication);
+
+            return ResponseEntity.ok(new JwtAuthResponseDTO(token));
         }
 
         @PostMapping("/register")
